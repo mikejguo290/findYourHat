@@ -52,6 +52,8 @@ class Field {
                 break;
             default: 
                 console.log('invalid move! Please choose from u, d, l, r as inputs')
+                // in case input is not formatted correctly, let game continue as if player given another chance. location unchanged
+                newCoordinates=this.currentCoordinates;
                 break;
 
         }
