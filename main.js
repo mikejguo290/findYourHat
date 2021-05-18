@@ -5,3 +5,8 @@ const hole = 'O';
 const fieldCharacter = '░';
 const pathCharacter = '*';
 
+class Field {
+    constructor(field){
+        this.fieldGrid = field;
+    }
+};
