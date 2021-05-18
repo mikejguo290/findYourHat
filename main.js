@@ -62,6 +62,10 @@ class Field {
         // 
         let x=coordinates[0]; 
         let y=coordinates[1];
+
+        console.log(`x is ${x}`);
+        console.log(`y is ${y}`); // coordinates can be out of bounds!
+        
         let field = this.fieldGrid;
         if (field[y][x]==='^'){
             return 'Won';
@@ -118,8 +122,17 @@ class Field {
                 // 5. update properties. 
                 // if the process hasn't stopped yet. update fieldGrid with a * to show where player is in the new location after the move.  
                 this.updateFieldGrid(newCoordinates);
-                // 6. print out what the field looks like after each move. 
+
+                // 6. update player location
+                let x = newCoordinates[0];
+                let y = newCoordinates[1];
+                this.currentCoordinates=[x, y]
+                // 7. print out what the field looks like after each move. 
                 this.print();
+                // debugging
+                console.log(this.moves);
+                console.log(this.continueGame);
+                console.log(this.currentCoordinates);
             };
         
         };
