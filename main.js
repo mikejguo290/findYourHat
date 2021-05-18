@@ -65,14 +65,19 @@ class Field {
 
         console.log(`x is ${x}`);
         console.log(`y is ${y}`); // coordinates can be out of bounds!
-        
+        // vet new coordinates before passing them to access field array values. 
         let field = this.fieldGrid;
+        // if x < 0 or x > length of inner array
+        // if y < 0 or y > length of outer array. 
+
+        if ( y < 0 || y > field.length || x < 0 || x > field[0].length){
+            return 'Out'
+        }
+
         if (field[y][x]==='^'){
             return 'Won';
         }else if (field[y][x]==='O'){
             return 'Hole';
-        }else if(field[y][x]===undefined){
-            return 'Out'
         }else{
             return 'Continue'; 
         };
@@ -93,7 +98,7 @@ class Field {
         while(continueGame){
             
             // 1, promptForMove() 
-            const move=prompt('which way to move?');
+            const move=prompt('which way to move? ');
             this.updateMoveHistory(move);
 
             // 2. get new coordinates.
