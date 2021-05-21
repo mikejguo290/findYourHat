@@ -60,7 +60,7 @@ class Field {
         return newCoordinates;
     }
 
-    checkGameStatus(coordinates){
+    processMove(coordinates){
         // 
         let x=coordinates[0]; 
         let y=coordinates[1];
@@ -92,7 +92,75 @@ class Field {
         newFieldGrid[y][x]="*";
         this.fieldGrid=newFieldGrid;
     }
-    // 
+
+    static generateField(height, width, percentage) {
+        // use the height and width to generate a randomised 2D array representing the field with a hat and holes. 
+        // the percentage is used to determine what percentage of the field should be covered in holes. 
+        // there has to be at least one pothole.
+
+        // the idea is to populate the arrays with '░' and then randomly insert the hat ^ and the holes O
+        // calculate how many holes and find their coordinates 
+        //update and return field Array.
+        const fieldArray=[];
+        // this creates a 2D array. 
+        for (let i=0; i<height; i++){
+            let rowArray=Array(width) // creates an array of filled with undefined.
+            rowArray.fill('░', 0, width)
+            fieldArray.push(rowArray);
+        };
+        
+        // function to  return array of random coordinates.
+        const createRandomCoordinates=(height, width)=>{
+            const x=Math.floor(Math.random()*width);
+            const y=Math.floor(Math.random()*height);
+            return [x, y]
+        }
+
+        // calculate holes from percentage
+        let holes = Math.floor(height * width * percentage / 100); // number of holes you need.
+     
+        //index of randomly selected holes, taken without replacement from all available index..    
+        let startCoordinates=[0,0]
+        // static method has no concept of this.property.
+
+        let selectedCoordinates=[]; // include starter coordinates here so generated coordinates will not duplicate it. 
+        let holesInserted=0
+        while(holesInserted<holes){
+             // select a random coordinate and if it isn't already recorded, update the field and added it to the list of coordinates for the holes. 
+            let randomCoordinates=createRandomCoordinates(height, width);
+            if (!selectedCoordinates.includes(randomCoordinates) && randomCoordinates!==startCoordinates ){
+                let x = randomCoordinates[0]
+                let y = randomCoordinates[1]
+                fieldArray[y][x]='O';
+                selectedCoordinates.push(randomCoordinates);
+                holesInserted+=1;
+            };
+        };
+
+        // place the hat randomly in the field
+        let hat=[]
+        while(hat.length===0){
+            let randomCoordinates=createRandomCoordinates(height, width);
+            if (!selectedCoordinates.includes(randomCoordinates) && randomCoordinates!==startCoordinates ){
+                let x = randomCoordinates[0]
+                let y = randomCoordinates[1]
+                fieldArray[y][x]='^';
+                hat.push(randomCoordinates);
+            }
+        }
+
+        // debugging code
+        /*
+        console.log(`number of holes required is ${holes}`);
+        console.log('holes index is ');
+        console.log(selectedCoordinates); 
+        console.log('field array is ');
+        console.log(fieldArray);
+        console.log('start coordinates ');
+        console.log();
+        */
+    }
+
     runGame(){
         let continueGame=this.continueGame;
         // 0. print field at the start of the game
@@ -101,20 +169,22 @@ class Field {
             
             // 1, promptForMove() 
             const move=prompt('which way to move? ');
+
+            // update history of moves
             this.updateMoveHistory(move);
 
             // 2. get new coordinates.
-            let newCoordinates=this.processInput(move);
+            let newCoordinates=this.processInput(move); // this line could move into processMove, then processMove(move) would suffice. 
             
             // 3. check whether new coordinates is legal for the player, or if they've won. 
-            let gameStatus=this.checkGameStatus(newCoordinates);
+            let gameStatus=this.processMove(newCoordinates);
 
-            // 4. do something conditional on gameStatus. 
+            // 4. do something conditional on gameStatus. // this could also move into processMove. 
             if (gameStatus==='Won'){
                 console.log('Congrats! You found your hat!');
                 this.continueGame=false;
                 return;
-                // exit runGame???
+                
             }else if(gameStatus==='Hole'){
                 console.log('Sorry. You fell down a hole')
                 this.continueGame=false;
@@ -161,4 +231,6 @@ const myField = new Field([
     ['░', '^', '░'],
     ]);
 
-myField.runGame();
+//myField.runGame();
+
+Field.generateField(4,4,34);
