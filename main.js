@@ -13,6 +13,7 @@ class Field {
         this.currentCoordinates=[0,0];  // [x, y]
     };
 
+   
     print(){
         // print out a string representation of the board. .join('') on each row array to join up elements without spaces in a new string.
         this.fieldGrid.forEach((fieldRow)=>{
@@ -128,7 +129,7 @@ class Field {
         while(holesInserted<holes){
              // select a random coordinate and if it isn't already recorded, update the field and added it to the list of coordinates for the holes. 
             let randomCoordinates=createRandomCoordinates(height, width);
-            if (!selectedCoordinates.includes(randomCoordinates) && randomCoordinates!==startCoordinates ){
+            if (!selectedCoordinates.includes(randomCoordinates) && JSON.stringify(randomCoordinates)!==JSON.stringify(startCoordinates) ){// arrays are objects. so === only returns true if the arrays have the same reference!
                 let x = randomCoordinates[0]
                 let y = randomCoordinates[1]
                 fieldArray[y][x]='O';
@@ -141,7 +142,7 @@ class Field {
         let hat=[]
         while(hat.length===0){
             let randomCoordinates=createRandomCoordinates(height, width);
-            if (!selectedCoordinates.includes(randomCoordinates) && randomCoordinates!==startCoordinates ){
+            if (!selectedCoordinates.includes(randomCoordinates) && JSON.stringify(randomCoordinates)!==JSON.stringify(startCoordinates)){
                 let x = randomCoordinates[0]
                 let y = randomCoordinates[1]
                 fieldArray[y][x]='^';
@@ -150,7 +151,7 @@ class Field {
         }
 
         // debugging code
-        /*
+        
         console.log(`number of holes required is ${holes}`);
         console.log('holes index is ');
         console.log(selectedCoordinates); 
@@ -158,7 +159,7 @@ class Field {
         console.log(fieldArray);
         console.log('start coordinates ');
         console.log();
-        */
+        
     }
 
     runGame(){
