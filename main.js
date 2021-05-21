@@ -13,7 +13,38 @@ class Field {
         this.currentCoordinates=[0,0];  // [x, y]
     };
 
-   
+    getFieldCharCoordinates(){
+        //select random fieldCharacter,
+        let fieldCharArray=[]
+        const field = this.fieldGrid;
+        for (let y=0; y<field.length; y++){
+            for (let x=0; x<field[y].length; x++){
+                let tile = field[y][x];
+                if (tile === '░'){
+                    fieldCharArray.push([x,y])
+                }
+            }
+        }
+        console.log('field char array is ');
+        console.log(fieldCharArray);
+        return fieldCharArray
+    };
+
+    randomStart(){
+        // set starting coordinates and mark the field tile at starting coordinates with a *.
+        const fieldCharArray=this.getFieldCharCoordinates();
+        const randomIndex=Math.floor(Math.random()*fieldCharArray.length)
+        const start=fieldCharArray[randomIndex];
+        this.currentCoordinates=start
+        let x=start[0];
+        let y=start[1]
+        this.fieldGrid[y][x]="*"
+    }
+
+    hardMode(){
+        //select random fieldCharacter 
+    }
+
     print(){
         // print out a string representation of the board. .join('') on each row array to join up elements without spaces in a new string.
         this.fieldGrid.forEach((fieldRow)=>{
@@ -150,8 +181,9 @@ class Field {
             }
         }
 
+        return fieldArray;
         // debugging code
-        
+        /*
         console.log(`number of holes required is ${holes}`);
         console.log('holes index is ');
         console.log(selectedCoordinates); 
@@ -159,11 +191,14 @@ class Field {
         console.log(fieldArray);
         console.log('start coordinates ');
         console.log();
-        
+        */
     }
 
     runGame(){
         let continueGame=this.continueGame;
+
+        this.randomStart(); // to provide a random starting location 
+
         // 0. print field at the start of the game
         this.print();
         while(continueGame){
@@ -232,6 +267,7 @@ const myField = new Field([
     ['░', '^', '░'],
     ]);
 
-//myField.runGame();
-
-Field.generateField(4,4,34);
+const land = Field.generateField(4,4,34);
+console.log(land);
+const myNewField = new Field(land);
+myNewField.runGame();
