@@ -20,30 +20,36 @@ class Field {
         for (let y=0; y<field.length; y++){
             for (let x=0; x<field[y].length; x++){
                 let tile = field[y][x];
-                if (tile === '░'){
+                if (tile !== '^' && tile !=='O' && tile !=="*"){
                     fieldCharArray.push([x,y])
                 }
             }
         }
-        console.log('field char array is ');
-        console.log(fieldCharArray);
         return fieldCharArray
     };
 
     randomStart(){
         // set starting coordinates and mark the field tile at starting coordinates with a *.
         const fieldCharArray=this.getFieldCharCoordinates();
-        const randomIndex=Math.floor(Math.random()*fieldCharArray.length)
+        const randomIndex=Math.floor(Math.random()*fieldCharArray.length);
         const start=fieldCharArray[randomIndex];
-        this.currentCoordinates=start
+        this.currentCoordinates=start;
         let x=start[0];
-        let y=start[1]
-        this.fieldGrid[y][x]="*"
+        let y=start[1];
+        this.fieldGrid[y][x]="*";
     }
 
     hardMode(){
-        //select random fieldCharacter 
-    }
+        // after a certain number of turns. add one or more holes.
+        const fieldCharArray=this.getFieldCharCoordinates();
+        if(this.moves.length>5){
+            const randomIndex=Math.floor(Math.random()*fieldCharArray.length);
+            const start=fieldCharArray[randomIndex];
+            let x=start[0];
+            let y=start[1];
+            this.fieldGrid[y][x]="O";
+            }
+        }
 
     print(){
         // print out a string representation of the board. .join('') on each row array to join up elements without spaces in a new string.
@@ -54,7 +60,7 @@ class Field {
 
     updateMoveHistory(move){
         // store a history of moves for the game. can't do time travel. 
-        this.moves.concat([move]);
+        this.moves=this.moves.concat(move);
     }
 
     processInput(move){
@@ -94,20 +100,19 @@ class Field {
 
     processMove(coordinates){
         // 
+    
         let x=coordinates[0]; 
         let y=coordinates[1];
 
-        console.log(`x is ${x}`);
-        console.log(`y is ${y}`); // coordinates can be out of bounds!
         // vet new coordinates before passing them to access field array values. 
         let field = this.fieldGrid;
         // if x < 0 or x > length of inner array
         // if y < 0 or y > length of outer array. 
 
-        if ( y < 0 || y > field.length || x < 0 || x > field[0].length){
+        if ( y < 0 || y > field.length-1 || x < 0 || x > field[0].length-1){
             return 'Out'
         }
-
+        
         if (field[y][x]==='^'){
             return 'Won';
         }else if (field[y][x]==='O'){
@@ -182,33 +187,31 @@ class Field {
         }
 
         return fieldArray;
-        // debugging code
-        /*
-        console.log(`number of holes required is ${holes}`);
-        console.log('holes index is ');
-        console.log(selectedCoordinates); 
-        console.log('field array is ');
-        console.log(fieldArray);
-        console.log('start coordinates ');
-        console.log();
-        */
+        
     }
 
-    runGame(){
+    runGame(mode){
         let continueGame=this.continueGame;
 
         this.randomStart(); // to provide a random starting location 
 
-        // 0. print field at the start of the game
+        //0 print field at the start of the game
         this.print();
+
+
         while(continueGame){
+            
+            if(mode==='hard'){
+                this.hardMode();
+            }
             
             // 1, promptForMove() 
             const move=prompt('which way to move? ');
-
+            
             // update history of moves
             this.updateMoveHistory(move);
-
+            // print move number and move.
+            console.log(`Move ${this.moves.length} - ${move}`);
             // 2. get new coordinates.
             let newCoordinates=this.processInput(move); // this line could move into processMove, then processMove(move) would suffice. 
             
@@ -243,9 +246,6 @@ class Field {
                 // 7. print out what the field looks like after each move. 
                 this.print();
                 // debugging
-                console.log(this.moves);
-                console.log(this.continueGame);
-                console.log(this.currentCoordinates);
             };
         
         };
@@ -268,6 +268,6 @@ const myField = new Field([
     ]);
 
 const land = Field.generateField(4,4,34);
-console.log(land);
+
 const myNewField = new Field(land);
-myNewField.runGame();
+myNewField.runGame('hard');
